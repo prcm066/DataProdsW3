@@ -1,0 +1,52 @@
+---
+title: "USD MXN"
+author: "Pablo Rodriguez Chavez"
+date: "April 29, 2018"
+output: html_document
+---
+
+
+# Introduction
+
+This is a simple test of the functionality offered by the plotly library.
+We will compare the plots offered by plain vanilla plotly against the ggplot2 ones with added plotly functionality
+
+The data was downloades from St. Louis Fed website : https://fred.stlouisfed.org/series/DEXMXUS
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(lubridate)
+```
+
+Load the data, and a little preprocessing.
+
+```{r, echo=TRUE}
+setwd("C:/Users/Pablo/Dropbox/DataProducts/week3")
+prices<-read.csv("DEXMXUS.csv", header=TRUE,stringsAsFactors = FALSE)
+
+prices<-prices[complete.cases(prices),]
+prices$DATE<-ymd(prices$DATE)
+prices$DEXMXUS<-as.numeric(prices$DEXMXUS)
+prices<-prices[complete.cases(prices),]
+
+```
+## Plotly
+```{r, echo=TRUE}
+p1<-plot_ly(data=prices, x=~DATE,y=~DEXMXUS,type="scatter",mode="lines")
+p1
+
+```
+
+## ggplot Plain Vanilla  
+```{r, echo=TRUE, cache=TRUE}
+p2<-ggplot(data=prices)+geom_line(aes(x=DATE,y=DEXMXUS))
+p2
+```
+
+## ggplotly: Plotly renderin ggplot object
+```{r, echo=TRUE}
+p3<-ggplotly(p2)
+p3
+```
