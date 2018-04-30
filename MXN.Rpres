@@ -1,0 +1,69 @@
+MXN
+========================================================
+author: Pablo Rodriguez
+date: April 30, 2018
+autosize: true
+
+Intro
+========================================================
+
+
+This is a simple test of the functionality offered by the plotly library.
+
+The data was downloades from St. Louis Fed website : https://fred.stlouisfed.org/series/DEXMXUS
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE, cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(lubridate)
+library(htmltools)
+```
+
+
+Loading and Cleaning
+========================================================
+
+
+Load the data, and a little preprocessing.
+
+```{r, echo=TRUE, cache=TRUE}
+setwd("C:/Users/Pablo/Dropbox/DataProducts/week3")
+prices<-read.csv("DEXMXUS.csv", header=TRUE,stringsAsFactors = FALSE)
+
+prices<-prices[complete.cases(prices),]
+prices$DATE<-ymd(prices$DATE)
+prices$DEXMXUS<-as.numeric(prices$DEXMXUS)
+prices<-prices[complete.cases(prices),]
+
+```
+Default Plotly
+========================================================
+USD MXN time series
+
+```{r, echo=FALSE, cache=TRUE}
+p<-plot_ly(data=prices, x=~DATE,y=~DEXMXUS,type="scatter",mode="lines")
+htmlwidgets::saveWidget(as_widget(p), file = "demo.html")
+```
+<iframe src="demo.html" style="position:absolute;height:80%;width:80%"></iframe>
+
+Plain Vanilla ggplot
+========================================================
+USD MXN time series
+
+```{r, echo=FALSE, cache=TRUE}
+p2<-ggplot(data=prices)+geom_line(aes(x=DATE,y=DEXMXUS))
+p2
+```
+
+
+Plain Vanilla ggplot
+========================================================
+USD MXN time series
+
+```{r, echo=FALSE, cache=TRUE}
+p3<-ggplotly(p2)
+
+htmlwidgets::saveWidget(as_widget(p3), file = "demo2.html")
+```
+<iframe src="demo2.html" style="position:absolute;height:80%;width:80%"></iframe>
